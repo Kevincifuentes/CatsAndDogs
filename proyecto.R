@@ -208,3 +208,13 @@ plot(strong)
 points(loc$x,loc$y,col="red")
 
 feature_numberOfStringPixelsForEdges = dim(loc)[1]
+
+### Parte de Enrique
+pet=as.data.frame(pet)
+pet3=dcast(pet,x~y,fun.aggregate = mean,value.var = "value")
+pet3$x=NULL
+pet4=abs(pet3[5:nrow(pet3),]-pet3[1:(nrow(pet3)-4),])
+plot(pet4)
+pheatmap(pet4)
+install.packages("pheatmap")
+library(pheatmap)
