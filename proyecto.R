@@ -166,11 +166,18 @@ plot(weak,main="Initial set of weak edges")
 #pero no es optimo para R. Utilizaré otro enfoque que han comentado: Morphological Dilatation
 overlap <- dilate_square(strong,3)*weak 
 strong.new <- strong + overlap
+overlap2 <- dilate_square(weak, 3) *strong
+weak.new <- weak + overlap2
 plot(strong.new,main="New set of strong edges")
+plot(weak, main="New set of weak edges")
 
 delta <- sum(strong.new)-sum(strong)
+weakones <- sum(weak.new)-sum(weak)
+
 #Numero de bordes prominentes detectados en la imagen
 feature_detectedStrongEdges = delta
+feature_detectedWeakEdges = weakones
+
 
 #Permite realizar una iteracion hasta llegar a un punto en el que el valor no cambia
 #NECESARIO PARA EL PROCESO
@@ -218,3 +225,8 @@ plot(pet4)
 pheatmap(pet4)
 install.packages("pheatmap")
 library(pheatmap)
+
+### Red Neuronal
+red_hormigon <- neuralnet(strength ~ cement + slag + ash + water + superplastic + coarseagg + fineagg + age,
+                          datos_hormigon_train, hidden = numeroCapasOculta, lifesign = "none", 
+                          linear.output = FALSE, threshold = diferenciaDeFitness)
