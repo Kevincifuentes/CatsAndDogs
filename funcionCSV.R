@@ -256,13 +256,13 @@ crearCSVImagen = function(files){
   
   ############### NORMALIZACION DE ATRIBUTOS ############
   # -----------------------------------------------------
-  doit <- function(x) {(x - min(x, na.rm=TRUE))/(max(x,na.rm=TRUE) - min(x, na.rm=TRUE))*1}
-  images2 <- as.data.frame(lapply(images[3:15], doit))
-  images[3:15]<-NULL
-  DatasetTest <- cbind(images2)
+  #doit <- function(x) {(x - min(x, na.rm=TRUE))/(max(x,na.rm=TRUE) - min(x, na.rm=TRUE))*1}
+  #images2 <- as.data.frame(lapply(images[3:15], doit))
+  #images[3:15]<-NULL
+  #DatasetTest <- cbind(images2)
   ############### Guardamos el dataset ##################
   # -----------------------------------------------------
-  return(DatasetTest)
+  return(images)
   
 }
 
