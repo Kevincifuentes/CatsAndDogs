@@ -1,0 +1,14 @@
+"","sapply(images[3:15], doit)"
+"feature_mean_color",NA
+"feature_mean_red",NA
+"feature_mean_green",NA
+"feature_mean_blue",NA
+"feature_mean_gradient",NA
+"feature_mean_gradient_channel1",NA
+"feature_mean_gradient_channel2",NA
+"feature_mean_gradient_channel3",NA
+"feature_numberOfLittleObjects",NA
+"feature_numberOfMediumObjects",NA
+"feature_detectedStrongEdges",NA
+"feature_detectedWeakEdges",NA
+"feature_numberOfStringPixelsForEdges",NA
