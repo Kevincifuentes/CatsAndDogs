@@ -52,7 +52,7 @@ for(i in 1:nrow(images)){
   #library(imager)
   pet <- load.image(str_c(fpath,images[i,1])) # leer con libreria imager
   pet<- resize(pet,height,width)
-  plot(pet,main="foto")
+  #plot(pet,main="foto")
   #Redimensionamos la imagen
   value<-R(pet)
   pet<- as.data.frame(pet)
@@ -81,7 +81,7 @@ for(i in 1:nrow(images)){
   pet<- resize(pet,height,width)
   
   grayimage=grayscale(pet)
-  plot(grayscale(pet))
+  #plot(grayscale(pet))
   pet<- as.data.frame(pet)
   feature_mean_color_grayimage<-mean(pet$value)
   #La media nos da lo mismo que con la imagen en color, PREGUNTAR PORQUE
@@ -90,7 +90,7 @@ for(i in 1:nrow(images)){
   pet <- load.image(str_c(fpath,images[i,1])) # leer con libreria imager
   pet<- resize(pet,height,width)
   gradient<-imgradient(pet,"xy")
-  plot(gradient)
+  #plot(gradient)
   gradient<-as.data.frame(gradient)
   
   #Sacar el valor promedio del gradiente, todos los canales
@@ -120,7 +120,7 @@ for(i in 1:nrow(images)){
     as.data.frame(dt) %>% subset(value>0) %>% dplyr::group_by(value) %>% dplyr::summarise(mx=mean(x),my=mean(y))
   }
   
-  plot(grayimage)
+  #plot(grayimage)
   get.centers(grayimage,"99%") %$% points(mx,my,col="red")
   feature_numberOfLittleObjects = dim(get.centers(grayimage,"99%"))[1]
   images$feature_numberOfLittleObjects[i]<-feature_numberOfLittleObjects
@@ -131,7 +131,7 @@ for(i in 1:nrow(images)){
   hessdet <- function(im,scale=1) isoblur(im,scale) %>% imhessian %$% { scale^2*(xx*yy - xy^2) }
   #Note the scaling (scale^2) factor in the determinant
   result_scale=as.data.frame(hessdet(grayimage,1))
-  plot(hessdet(grayimage,1),main="Determinant of the Hessian at scale 1")
+  #plot(hessdet(grayimage,1),main="Determinant of the Hessian at scale 1")
   get.centers(grayimage,"95.5%") %$% points(mx,my,col="red")
   feature_numberOfMediumObjects = dim(get.centers(grayimage,"95.5%"))[1]
   images$feature_numberOfMediumObjects[i]<-feature_numberOfMediumObjects
@@ -145,17 +145,17 @@ for(i in 1:nrow(images)){
   
   #PASO1: denoising
   im <- grayscale(pet) %>% isoblur(2)
-  plot(im)
+  #plot(im)
   
   #PASO2: image gradient, magnitude and angle
   gr <- imgradient(im,"xy")
-  plot(gr,layout="row")
+  #plot(gr,layout="row")
   
   mag <- with(gr,sqrt(x^2+y^2))
-  plot(mag)
+  #plot(mag)
   
   ang <- with(gr,atan2(y,x))
-  plot(ang)
+  #plot(ang)
   
   #PASO 3: Cleaning using non-maxima suppression
   threshold(mag) %>% plot
@@ -176,7 +176,7 @@ for(i in 1:nrow(images)){
   #CONSEGUIMOS NEUTRALIZAR LOS NO MAXIMOS, COMPROBANDO SUS DOS VECINOS A CADA LADO
   throw <- (mag < val.bwd) | (mag < val.fwd)
   mag[throw] <- 0
-  plot(mag)
+  #plot(mag)
   
   #PASO4: Hysteresis
   #Detectamos los bordes mediante t1 y t2
@@ -189,9 +189,9 @@ for(i in 1:nrow(images)){
   layout(t(1:2))
   
   strong <- as.cimg(mag>t2)
-  plot(strong,main="Initial set of strong edges")
+  #plot(strong,main="Initial set of strong edges")
   weak <- as.cimg(mag %inr% c(t1,t2))
-  plot(weak,main="Initial set of weak edges")
+  #plot(weak,main="Initial set of weak edges")
   
   #El proceso de Hysteresis normal se haria mediante un búcle, comparando vecinos
   #pero no es optimo para R. Utilizaré otro enfoque que han comentado: Morphological Dilatation
@@ -199,8 +199,8 @@ for(i in 1:nrow(images)){
   strong.new <- strong + overlap
   overlap2 <- dilate_square(weak, 3) *strong
   weak.new <- weak + overlap2
-  plot(strong.new,main="New set of strong edges")
-  plot(weak, main="New set of weak edges")
+  #plot(strong.new,main="New set of strong edges")
+  #plot(weak, main="New set of weak edges")
   
   delta <- sum(strong.new)-sum(strong)
   weakones <- sum(weak.new)-sum(weak)
@@ -237,13 +237,13 @@ for(i in 1:nrow(images)){
   out
   
   canny <- out$strong
-  plot(canny,main="Canny edges")
+  #plot(canny,main="Canny edges")
   
   lab <- label(strong,TRUE)*strong
   loc <- as.data.frame(lab) %>% dplyr::filter(value > 0)%>%
     dplyr::group_by(value) %>%
     dplyr::summarize(x=x[1],y=y[1])
-  plot(strong)
+  #plot(strong)
   points(loc$x,loc$y,col="red")
   
   feature_numberOfStringPixelsForEdges = dim(loc)[1]  
@@ -255,12 +255,13 @@ for(i in 1:nrow(images)){
 
 
 
-# FILTRO SOVEL
+# FILTRO SOBEL
 # -----------------------------------------------------
 # falta calcularlo
-
-
-
+library(rimage)
+sobel(img)
+data(logo)
+plot(normalize(sobel(logo)))
 
 
 # DIVISION DATASET (no es necesario?? k-fold, ya tenemos los dos conjuntos)
@@ -273,15 +274,7 @@ for(i in 1:nrow(images)){
 
 
 
-### Parte de Enrique
-pet=as.data.frame(pet)
-pet3=dcast(pet,x~y,fun.aggregate = mean,value.var = "value")
-pet3$x=NULL
-pet4=abs(pet3[5:nrow(pet3),]-pet3[1:(nrow(pet3)-4),])
-plot(pet4)
-pheatmap(pet4)
-install.packages("pheatmap")
-library(pheatmap)
+
 
 
 
