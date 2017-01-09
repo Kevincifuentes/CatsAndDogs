@@ -32,7 +32,6 @@ server <- shinyServer(function(input, output) {
                       threshold     = thres,
                       algorithm     = "rprop+")
   
-  
   output$files <- renderTable(input$files)
   
   files <- reactive({
@@ -42,7 +41,7 @@ server <- shinyServer(function(input, output) {
   })
   
   #Añado la función para obtener el csv
-  source("../funcionCSV.R")
+  source("funcionCSV.R")
   
   output$images <- renderUI({
     if(is.null(input$files)) return(NULL)
@@ -74,7 +73,7 @@ server <- shinyServer(function(input, output) {
         #Convertir a CSV la imagen
         print(input$files$datapath)
         datagram <- crearCSVImagen(input$files)
-        write.csv(datagram,file=paste(input$files$name, ".csv"))
+        write.csv(datagram,file=paste("actual", ".csv"))
         filename = paste(input$files$name, ".csv")
       })
     }
@@ -82,8 +81,12 @@ server <- shinyServer(function(input, output) {
   
   observeEvent(input$predecir, {
     #Aquí habría que poner la prediccion con la red neuronal
-    datos_test <- read.csv(paste(filename, ".csv"))
-    prediccion  <- compute(modelo,within(datos_test,rm(animaltype)))
+    datos_test <- read.csv(paste("actual", ".csv"))
+    datos_test[1:2]<-NULL
+    datos_test$animaltype=0
+    print(datos_test)
+    prediccion  <- compute(modelo, within(datos_test,rm(animaltype)))
+    print(prediccion)
   })
   
 })
