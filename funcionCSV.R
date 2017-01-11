@@ -36,7 +36,7 @@ crearCSVImagen = function(files){
     #library(imager)
     pet <- load.image(files$datapath) # leer con libreria imager
     pet<- resize(pet,height,width)
-    plot(pet,main="foto")
+    #plot(pet,main="foto")
     #Redimensionamos la imagen
     value<-R(pet)
     pet<- as.data.frame(pet)
@@ -45,7 +45,6 @@ crearCSVImagen = function(files){
     #Sacar valores RGB
     #Color promedio de toda la imagen
     feature_mean_color<-mean(pet$value)
-    
     images$feature_mean_color<-feature_mean_color
     #Sacar valor Rojo promedio, sumar los primeros 40000 valores del canal 1 y sacar la media
     red<-head(pet,40000)
@@ -63,9 +62,8 @@ crearCSVImagen = function(files){
     #Sacar la luminosidad
     pet <- load.image(files$datapath) # leer con libreria imager  58
     pet<- resize(pet,height,width)
-    
     grayimage=grayscale(pet)
-    plot(grayscale(pet))
+    #plot(grayscale(pet))
     pet<- as.data.frame(pet)
     feature_mean_color_grayimage<-mean(pet$value)
     #La media nos da lo mismo que con la imagen en color, PREGUNTAR PORQUE
@@ -74,14 +72,13 @@ crearCSVImagen = function(files){
     pet <- load.image(files$datapath) # leer con libreria imager
     pet<- resize(pet,height,width)
     gradient<-imgradient(pet,"xy")
-    plot(gradient)
+    #plot(gradient)
     gradient<-as.data.frame(gradient)
     
     #Sacar el valor promedio del gradiente, todos los canales
     subset_gradient<-subset(gradient,gradient$value>=0)
     feature_mean_gradient<-mean(subset_gradient$value)
     images$feature_mean_gradient <-feature_mean_gradient
-    
     #Sacar el valor promedio del gradiente en el canal 1 (red)
     subset_gradient_channel1<-subset(subset_gradient, subset_gradient$cc==1)
     feature_mean_gradient_channel1<-mean(subset_gradient_channel1$value)
@@ -115,34 +112,34 @@ crearCSVImagen = function(files){
     hessdet <- function(im,scale=1) isoblur(im,scale) %>% imhessian %$% { scale^2*(xx*yy - xy^2) }
     #Note the scaling (scale^2) factor in the determinant
     result_scale=as.data.frame(hessdet(grayimage,1))
-    plot(hessdet(grayimage,1),main="Determinant of the Hessian at scale 1")
+    #plot(hessdet(grayimage,1),main="Determinant of the Hessian at scale 1")
     get.centers(grayimage,"95.5%") %$% points(mx,my,col="red")
     feature_numberOfMediumObjects = dim(get.centers(grayimage,"95.5%"))[1]
     images$feature_numberOfMediumObjects <-feature_numberOfMediumObjects
-    
     prueba<-as.data.frame(get.centers(grayimage,"98.5%"))
     
     ################## Canny Edge ###################################################
     #funciones alternativas para el mismo uso >>>>>>>>> http://dahtah.github.io/imager/canny.html
     
     pet <- load.image(files$datapath)
+    pet<- resize(pet,height,width)
     
     #PASO1: denoising
     im <- grayscale(pet) %>% isoblur(2)
-    plot(im)
+    #plot(im)
     
     #PASO2: image gradient, magnitude and angle
     gr <- imgradient(im,"xy")
-    plot(gr,layout="row")
+    #plot(gr,layout="row")
     
     mag <- with(gr,sqrt(x^2+y^2))
-    plot(mag)
+    #plot(mag)
     
     ang <- with(gr,atan2(y,x))
-    plot(ang)
+    #plot(ang)
     
     #PASO 3: Cleaning using non-maxima suppression
-    threshold(mag) %>% plot
+    #threshold(mag) %>% plot
     
     #Going along the (normalised) gradient
     #Xc(im) is an image containing the x coordinates of the image
@@ -160,8 +157,7 @@ crearCSVImagen = function(files){
     #CONSEGUIMOS NEUTRALIZAR LOS NO MAXIMOS, COMPROBANDO SUS DOS VECINOS A CADA LADO
     throw <- (mag < val.bwd) | (mag < val.fwd)
     mag[throw] <- 0
-    plot(mag)
-    
+    #plot(mag)
     #PASO4: Hysteresis
     #Detectamos los bordes mediante t1 y t2
     #Las magnitudes por encima de t1 son bordes fuertes (prominentes)
@@ -173,9 +169,9 @@ crearCSVImagen = function(files){
     layout(t(1:2))
     
     strong <- as.cimg(mag>t2)
-    plot(strong,main="Initial set of strong edges")
+    #plot(strong,main="Initial set of strong edges")
     weak <- as.cimg(mag %inr% c(t1,t2))
-    plot(weak,main="Initial set of weak edges")
+    #plot(weak,main="Initial set of weak edges")
     
     #El proceso de Hysteresis normal se haria mediante un b?cle, comparando vecinos
     #pero no es optimo para R. Utilizar? otro enfoque que han comentado: Morphological Dilatation
@@ -183,8 +179,8 @@ crearCSVImagen = function(files){
     strong.new <- strong + overlap
     overlap2 <- dilate_square(weak, 3) *strong
     weak.new <- weak + overlap2
-    plot(strong.new,main="New set of strong edges")
-    plot(weak, main="New set of weak edges")
+    #plot(strong.new,main="New set of strong edges")
+    #plot(weak, main="New set of weak edges")
     
     delta <- sum(strong.new)-sum(strong)
     weakones <- sum(weak.new)-sum(weak)
@@ -192,7 +188,6 @@ crearCSVImagen = function(files){
     #Numero de bordes prominentes detectados en la imagen
     feature_detectedStrongEdges = delta
     feature_detectedWeakEdges = weakones
-    
     images$feature_detectedStrongEdges <-feature_detectedStrongEdges
     images$feature_detectedWeakEdges <-feature_detectedWeakEdges
     
@@ -216,26 +211,22 @@ crearCSVImagen = function(files){
     #hystFP is a new function that will call expandStrong repeatedly until
     #the weak and strong sets don't change anymore
     hystFP <- fp(expandStrong)
-    
     #Call hystFP
     out <- list(strong=strong,weak=weak) %>% hystFP
-    out
     
     canny <- out$strong
-    plot(canny,main="Canny edges")
-    
+    #plot(canny,main="Canny edges")
     lab <- label(strong,TRUE)*strong
     loc <- as.data.frame(lab) %>% dplyr::filter(value > 0)%>%
       dplyr::group_by(value) %>%
       dplyr::summarize(x=x[1],y=y[1])
-    plot(strong)
+    #plot(strong)
     points(loc$x,loc$y,col="red")
-    
+
     feature_numberOfStringPixelsForEdges = dim(loc)[1]  
     images$feature_numberOfStringPixelsForEdges <-feature_numberOfStringPixelsForEdges 
 
-  
-  
+
   
   # FILTRO SOVEL
   # -----------------------------------------------------
