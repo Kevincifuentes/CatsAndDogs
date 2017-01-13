@@ -52,7 +52,7 @@ for(i in 1:nrow(images)){
   #library(imager)
   pet <- load.image(str_c(fpath,images[i,1])) # leer con libreria imager
   pet<- resize(pet,height,width)
-  #plot(pet,main="foto")
+  plot(pet,main="foto")
   #Redimensionamos la imagen
   value<-R(pet)
   pet<- as.data.frame(pet)
@@ -251,33 +251,6 @@ for(i in 1:nrow(images)){
   
 } #fin del bucle FOR
 
-
-
-
-
-# FILTRO SOBEL
-# -----------------------------------------------------
-# falta calcularlo
-library(rimage)
-sobel(img)
-data(logo)
-plot(normalize(sobel(logo)))
-
-
-# DIVISION DATASET (no es necesario?? k-fold, ya tenemos los dos conjuntos)
-# -----------------------------------------------------
-#Dividimos los datos en train (primer 80%)y test (ultimo 20%)
-#cutoff = round(0.8*nrow(images))
-#images_train<-images[1:cutoff,]
-#images_test<-images[-(1:cutoff),]
-
-
-
-
-
-
-
-
 ############### NORMALIZACION DE ATRIBUTOS ############
 # -----------------------------------------------------
 doit <- function(x) {(x - min(x, na.rm=TRUE))/(max(x,na.rm=TRUE) - min(x, na.rm=TRUE))*1}
@@ -288,4 +261,22 @@ DatasetTrain <- cbind(images, images2)
 ############### Guardamos el dataset ##################
 # -----------------------------------------------------
 write.csv(DatasetTrain,file="DatasetTrain.csv")
+
+
+# DIVISION DATASET para obtener el dataset de test
+# -----------------------------------------------------
+#Dividimos los datos en train (primer 80%)y test (ultimo 20%)
+setwd("C:\\Users\\LAPTOP\\Desktop\\I.A.A\\PROYECTO")
+data_tra=read.csv("DatasetTrain.csv")
+#cutoff = round(0.8*nrow(data_tra))
+#images_train<-data_tra[1:cutoff,]
+#images_test<-data_tra[-(1:cutoff),]
+
+
+
+#Cogemos 20% para test (5000) los 2500 primeros gatos y los 2500 ultimos perros del dataset que tiene 25000
+myDataTest <- data_tra[-c(2501:22500), ]
+
+write.csv(myDataTest,file="DatasetTest.csv")
+
 

@@ -4,8 +4,7 @@ setwd(dirname(rstudioapi::getActiveDocumentContext()$path))
 datos_train=read.csv("DatasetTrain.csv")
 datos_train[1]<-NULL
 datos_test=read.csv("DatasetTest.csv")
-datos_test[1:2]<-NULL
-datos_test$animaltype=0
+datos_test[1:3]<-NULL
 
 library(neuralnet)
 # RED NEURONAL
@@ -15,14 +14,15 @@ frml <- as.formula(paste("animaltype ~", paste(nms, collapse = " + ")))
 
 # VARIABLES DE CONFIGURACION
 # -----------------------------------------------------
-numeroCapasOcultas=c(20,10,5)
-thres=0.05
+numeroCapasOcultas=c(5,2)
+thres=0.2
 
 # MODELO
 # -----------------------------------------------------
 modelo <- neuralnet(frml,
                     data = datos_train,
                     hidden = numeroCapasOcultas,
+                    stepmax = 1e+06,
                     rep = 1, #numero de iteraciones
                     lifesign = "full",
                     linear.output = FALSE,
@@ -31,39 +31,59 @@ modelo <- neuralnet(frml,
 
 #GRAFICO DEL MODELO
 # -----------------------------------------------------
-plot(modelo,rep = "best") #best muestra el mejor de todas las iteracciones
-
-
-
-
-#Mirar desde aqui............................
-
-
+plot(modelo,rep = "best") #best muestra el mejor de todas las iteracciones, rep=numero iteraciones
 
 # PREDICCION
 # -----------------------------------------------------
 prediccion  <- compute(modelo,within(datos_test,rm(animaltype)))
-tabla<-data.frame(Real = datos_test$animaltype, Predicted = prediccion$net.result, Error = abs(datos_test$animaltype - prediccion$net.result) / datos_test$animaltype)
-
-# se transforma el valor escalar al valor nominal original
-#strength.predict <- prediccion$net.result*(max(datos$strength)-min(datos$strength))+min(datos$strength)
-#strength.real    <- (datos_test$strength)*(max(datos$strength)-min(datos$strength))+min(datos$strength)
-
-# SUMA DE ERROR CUADRATICO
-# -----------------------------------------------------
-#(se.nn <- sum((strength.real - strength.predict)^2)/nrow(datos_test))
-
-#GRAFICO ERRORES
-# -----------------------------------------------------
-#qplot(x=strength.real, y=strength.predict, geom=c("point","smooth"), method="lm", 
-      #main=paste("Real Vs Prediccion. Summa de Error Cuadratico=", round(se.nn,2)))
+table<-data.frame(Real = datos_test$animaltype, Predicted = prediccion$net.result, Error = abs(datos_test$animaltype - prediccion$net.result) / datos_test$animaltype)
 
 
 #MEDIR LA CORRELACION ENTRE LOS RESULTADOS DE LA RED
 # -----------------------------------------------------
-#prediccion.strength <- prediccion$net.result
-#cor(prediccion.strength,datos_test$animaltype)
+#prediccion.animaltype <- prediccion$net.result
+#cor(prediccion.animaltype,datos_test$animaltype)
 
+gatos_acertados=0
+cantidad_gatos=0
+cantidad_perros=0
+perros_acertados=0
+
+#Comprobar el porcentaje de acierto y error
+for(i in 1:nrow(table)){
+  if(table[i,1]==0){
+    cantidad_gatos=cantidad_gatos+1
+  }else{
+    cantidad_perros=cantidad_perros+1
+  }
+  if(table[i,1]==0 && table[i,2]<=0.5){
+    gatos_acertados=gatos_acertados+1
+  }
+  if(table[i,1]==1 && table[i,2]>0.5){
+    perros_acertados=perros_acertados+1
+  }
+  
+}
+
+porcentaje_acierto_gatos=gatos_acertados*100/cantidad_gatos
+porcentaje_acierto_perros=perros_acertados*100/cantidad_perros
+porcentaje_acierto_total<-(gatos_acertados+perros_acertados)*100/nrow(table)
+
+cantidad_gatos
+cantidad_perros
+gatos_acertados
+perros_acertados
+porcentaje_acierto_gatos
+porcentaje_acierto_perros
+porcentaje_acierto_total
+
+
+#SAVE OUR MODEL TO DISK
+saveRDS(modelo, "./final_model.rds")
+
+#Load the model
+super_model <- readRDS("./final_model.rds")
+print(super_model)
 
 
 
