@@ -1,4 +1,3 @@
-#Se establece el PATH donde se guarda el script R
 rm(list = ls())
 setwd(dirname(rstudioapi::getActiveDocumentContext()$path)) 
 datos_train=read.csv("DatasetTrain.csv")
@@ -14,8 +13,8 @@ frml <- as.formula(paste("animaltype ~", paste(nms, collapse = " + ")))
 
 # VARIABLES DE CONFIGURACION
 # -----------------------------------------------------
-numeroCapasOcultas=c(5,2)
-thres=0.2
+numeroCapasOcultas=c(13,6)
+thres=0.3
 
 # MODELO
 # -----------------------------------------------------
@@ -37,7 +36,6 @@ plot(modelo,rep = "best") #best muestra el mejor de todas las iteracciones, rep=
 # -----------------------------------------------------
 prediccion  <- compute(modelo,within(datos_test,rm(animaltype)))
 table<-data.frame(Real = datos_test$animaltype, Predicted = prediccion$net.result, Error = abs(datos_test$animaltype - prediccion$net.result) / datos_test$animaltype)
-
 
 #MEDIR LA CORRELACION ENTRE LOS RESULTADOS DE LA RED
 # -----------------------------------------------------
@@ -62,7 +60,6 @@ for(i in 1:nrow(table)){
   if(table[i,1]==1 && table[i,2]>0.5){
     perros_acertados=perros_acertados+1
   }
-  
 }
 
 porcentaje_acierto_gatos=gatos_acertados*100/cantidad_gatos
