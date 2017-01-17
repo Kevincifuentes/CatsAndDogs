@@ -11,26 +11,10 @@ server <- shinyServer(function(input, output, session) {
   datos_test$animaltype=0
   
   library(neuralnet)
-  # RED NEURONAL
-  # -----------------------------------------------------
-  nms  <- names(datos_train[3:15])
-  frml <- as.formula(paste("animaltype ~", paste(nms, collapse = " + ")))
-  
-  # VARIABLES DE CONFIGURACION
-  # -----------------------------------------------------
-  numeroCapasOcultas=c(20,10,5)
-  thres=0.05
   
   # MODELO
   # -----------------------------------------------------
-  modelo <- neuralnet(frml,
-                      data = datos_train,
-                      hidden = numeroCapasOcultas,
-                      rep = 1, #numero de iteraciones
-                      lifesign = "full",
-                      linear.output = FALSE,
-                      threshold     = thres,
-                      algorithm     = "rprop+")
+  modelo <- readRDS("./final_model.rds")
   
   output$files <- renderTable(input$files)
   
@@ -105,7 +89,7 @@ server <- shinyServer(function(input, output, session) {
     prediccion  <- compute(modelo, within(datos_test,rm(animaltype)))
     #print(prediccion)
     valor <- prediccion$net.result
-    #print(valor[1,1])
+    print(valor[1,1])
     updateSliderInput(session, "slider1", value = valor[1,1],
                       min =0, max = 1, step = 0.01)
   })

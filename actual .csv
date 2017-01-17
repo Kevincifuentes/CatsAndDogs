@@ -1,2 +1,2 @@
 "","1","animaltype","feature_mean_color","feature_mean_red","feature_mean_green","feature_mean_blue","feature_mean_gradient","feature_mean_gradient_channel1","feature_mean_gradient_channel2","feature_mean_gradient_channel3","feature_numberOfLittleObjects","feature_numberOfMediumObjects","feature_detectedStrongEdges","feature_detectedWeakEdges","feature_numberOfStringPixelsForEdges"
-"1",1,NA,0.838907233115468,0.86646637254902,0.840084008714597,0.83070068627451,0.00981662984331413,0.00934393855042145,0.0096642884029683,0.0104428672991865,654,1874,187,173,181
+"1",1,NA,0.829299622367466,0.858189019607843,0.825825098039216,0.852917450980392,0.00536848846036634,0.00490553067682194,0.00545155257418308,0.00574755926723296,640,2002,97,95,177
