@@ -1,0 +1,3 @@
+"","feature_mean_color","feature_mean_red","feature_mean_green","feature_mean_blue","feature_mean_gradient","feature_mean_gradient_channel1","feature_mean_gradient_channel2","feature_mean_gradient_channel3","feature_numberOfLittleObjects","feature_numberOfMediumObjects","feature_detectedStrongEdges","feature_detectedWeakEdges","feature_numberOfStringPixelsForEdges"
+"1",0.082061452432825,0.0186055882352941,0.0618901960784314,0.0173305882352941,0.00183828796434364,0.00173880773750399,0.00195590219053338,0.00181999090265727,137,356,0,0,4
+"2",0.96714290486565,0.999978921568627,0.956521350762527,1,0.0806873527361484,0.0806421571473444,0.0809483206444058,0.0804717236893021,2071,5871,23756,9621,2081

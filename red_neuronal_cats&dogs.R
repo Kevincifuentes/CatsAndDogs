@@ -14,7 +14,7 @@ frml <- as.formula(paste("animaltype ~", paste(nms, collapse = " + ")))
 # VARIABLES DE CONFIGURACION
 # -----------------------------------------------------
 numeroCapasOcultas=c(13,6)
-thres=0.3
+thres=0.2
 
 # MODELO
 # -----------------------------------------------------
@@ -83,4 +83,8 @@ super_model <- readRDS("./final_model.rds")
 print(super_model)
 
 
+prediccion  <- compute(super_model,within(datos_test,rm(animaltype)))
+table<-data.frame(Real = datos_test$animaltype, Predicted = prediccion$net.result, Error = abs(datos_test$animaltype - prediccion$net.result) / datos_test$animaltype)
+
+#MEDIR LA CORRELACION ENTRE LO
 

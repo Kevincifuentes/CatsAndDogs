@@ -52,7 +52,7 @@ for(i in 1:nrow(images)){
   #library(imager)
   pet <- load.image(str_c(fpath,images[i,1])) # leer con libreria imager
   pet<- resize(pet,height,width)
-  plot(pet,main="foto")
+  #plot(pet,main="foto")
   #Redimensionamos la imagen
   value<-R(pet)
   pet<- as.data.frame(pet)
@@ -250,6 +250,49 @@ for(i in 1:nrow(images)){
   images$feature_numberOfStringPixelsForEdges[i]<-feature_numberOfStringPixelsForEdges 
   
 } #fin del bucle FOR
+
+############### Guardamos dos dataset (train y test) con los valores max min del dataset generado ##################
+# ------------- Sirve para normalizar la imagen en la shiny app ----------------- #
+# ------------- Hay que hacerlo con los atributos aun sin normalizar ------------ #
+
+write.csv(images,file="DatasetTrainSinNormalizar.csv") #Guardar dataset images sin normalizar
+
+#Generar dataset de train con los valores max min para normalizar en la shiny app
+colmax=function(data)sapply(data, max, na.rm=TRUE)
+colmin=function(data)sapply(data, min, na.rm=TRUE)
+imagesporsiacaso<-images
+images<-imagesporsiacaso 
+images[1:2]<-NULL
+datamax<-as.data.frame(colmax(images))
+datamax.T <- t(datamax[,1:ncol(datamax)]) # Transpose dataset
+datamax.T <-as.data.frame(datamax.T)
+datamin<-as.data.frame(colmin(images))
+datamin.T <- t(datamin[,1:ncol(datamin)]) # Transpose dataset
+datamin.T <-as.data.frame(datamin.T)
+DatasetTrain_max_min<-merge(datamin.T,datamax.T,all=TRUE)
+nms  <- names(images[1:13])
+DatasetTrain_max_min<-setNames(DatasetTrain_max_min,  nms)
+write.csv(DatasetTrain_max_min,file="DatasetTrainMaxMin.csv")
+
+#Generar dataset de test con los valores max min para normalizar en la shiny app
+setwd("C:\\Users\\LAPTOP\\Desktop\\I.A.A\\PROYECTO")
+data_tra=read.csv("DatasetTrain.csv")
+DataTest <- data_tra[-c(2501:22500), ]
+DataTest[1:3]<-NULL
+datamax<-as.data.frame(colmax(DataTest))
+datamax.T <- t(datamax[,1:ncol(datamax)]) # Transpose dataset
+datamax.T <-as.data.frame(datamax.T)
+datamin<-as.data.frame(colmin(DataTest))
+datamin.T <- t(datamin[,1:ncol(datamin)]) # Transpose dataset
+datamin.T <-as.data.frame(datamin.T)
+DatasetTest_max_min<-merge(datamin.T,datamax.T,all=TRUE)
+nms  <- names(DataTest[1:13])
+DatasetTest_max_min<-setNames(DatasetTest_max_min,  nms)
+write.csv(DatasetTest_max_min,file="DatasetTestMaxMin.csv")
+
+
+
+
 
 ############### NORMALIZACION DE ATRIBUTOS ############
 # -----------------------------------------------------
