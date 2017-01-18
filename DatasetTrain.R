@@ -5,11 +5,11 @@ library(stringr)
 devtools::install_github("dahtah/fixedpoints")
 library(fixedpoints)
 # Set wd where images are located
-#setwd("C:\\Users\\LAPTOP\\Desktop\\I.A.A\\PROYECTO\\train")
-setwd("/Users/kevin/Desktop/Master/InteligenciaArtificial/R/Proyecto/train")
+setwd("C:\\Users\\LAPTOP\\Desktop\\I.A.A\\PROYECTO\\train")
+#setwd("/Users/kevin/Desktop/Master/InteligenciaArtificial/R/Proyecto/train")
 images <- list.files(pattern = ".jpg") # Load images names, only JPGs) # Load images names
-#fpath<-"C:\\Users\\LAPTOP\\Desktop\\I.A.A\\PROYECTO\\train\\"
-fpath<-"/Users/kevin/Desktop/Master/InteligenciaArtificial/R/Proyecto/train/"
+fpath<-"C:\\Users\\LAPTOP\\Desktop\\I.A.A\\PROYECTO\\train\\"
+#fpath<-"/Users/kevin/Desktop/Master/InteligenciaArtificial/R/Proyecto/train/"
 
 
 #Variables para la dimension de la imagen
@@ -193,8 +193,8 @@ for(i in 1:nrow(images)){
   weak <- as.cimg(mag %inr% c(t1,t2))
   #plot(weak,main="Initial set of weak edges")
   
-  #El proceso de Hysteresis normal se haria mediante un b?cle, comparando vecinos
-  #pero no es optimo para R. Utilizar? otro enfoque que han comentado: Morphological Dilatation
+  #El proceso de Hysteresis normal se haria mediante un búcle, comparando vecinos
+  #pero no es optimo para R. Utilizaré otro enfoque que han comentado: Morphological Dilatation
   overlap <- dilate_square(strong,3)*weak 
   strong.new <- strong + overlap
   overlap2 <- dilate_square(weak, 3) *strong
@@ -251,49 +251,54 @@ for(i in 1:nrow(images)){
   
 } #fin del bucle FOR
 
+
+#DESCOMENTAR ESTA PARTE PARA GENERAR LOS DATASET SIN NORMALIZAR PARA USAR EN LA SHINY APP
+
 ############### Guardamos dos dataset (train y test) con los valores max min del dataset generado ##################
 # ------------- Sirve para normalizar la imagen en la shiny app ----------------- #
 # ------------- Hay que hacerlo con los atributos aun sin normalizar ------------ #
 
-write.csv(images,file="DatasetTrainSinNormalizar.csv") #Guardar dataset images sin normalizar
+#write.csv(images,file="DatasetTrainSinNormalizar.csv") #Guardar dataset images sin normalizar
 
 #Generar dataset de train con los valores max min para normalizar en la shiny app
-colmax=function(data)sapply(data, max, na.rm=TRUE)
-colmin=function(data)sapply(data, min, na.rm=TRUE)
-imagesporsiacaso<-images
-images<-imagesporsiacaso 
-images[1:2]<-NULL
-datamax<-as.data.frame(colmax(images))
-datamax.T <- t(datamax[,1:ncol(datamax)]) # Transpose dataset
-datamax.T <-as.data.frame(datamax.T)
-datamin<-as.data.frame(colmin(images))
-datamin.T <- t(datamin[,1:ncol(datamin)]) # Transpose dataset
-datamin.T <-as.data.frame(datamin.T)
-DatasetTrain_max_min<-merge(datamin.T,datamax.T,all=TRUE)
-nms  <- names(images[1:13])
-DatasetTrain_max_min<-setNames(DatasetTrain_max_min,  nms)
-write.csv(DatasetTrain_max_min,file="DatasetTrainMaxMin.csv")
+#colmax=function(data)sapply(data, max, na.rm=TRUE)
+#colmin=function(data)sapply(data, min, na.rm=TRUE)
+#imagesporsiacaso<-images
+#images<-imagesporsiacaso 
+#images[1:2]<-NULL
+#datamax<-as.data.frame(colmax(images))
+#datamax.T <- t(datamax[,1:ncol(datamax)]) # Transpose dataset
+#datamax.T <-as.data.frame(datamax.T)
+#datamin<-as.data.frame(colmin(images))
+#datamin.T <- t(datamin[,1:ncol(datamin)]) # Transpose dataset
+#datamin.T <-as.data.frame(datamin.T)
+#DatasetTrain_max_min<-merge(datamin.T,datamax.T,all=TRUE)
+#nms  <- names(images[1:13])
+#DatasetTrain_max_min<-setNames(DatasetTrain_max_min,  nms)
+#write.csv(DatasetTrain_max_min,file="DatasetTrainMaxMin.csv")
 
 #Generar dataset de test con los valores max min para normalizar en la shiny app
 #setwd("C:\\Users\\LAPTOP\\Desktop\\I.A.A\\PROYECTO")
-setwd("/Users/kevin/Desktop/Master/InteligenciaArtificial/R/Proyecto/")
-data_tra=read.csv("DatasetTrainSinNormalizar.csv")
-DataTest <- data_tra[-c(2501:22500), ]
-DataTest[1:3]<-NULL
-datamax<-as.data.frame(colmax(DataTest))
-datamax.T <- t(datamax[,1:ncol(datamax)]) # Transpose dataset
-datamax.T <-as.data.frame(datamax.T)
-datamin<-as.data.frame(colmin(DataTest))
-datamin.T <- t(datamin[,1:ncol(datamin)]) # Transpose dataset
-datamin.T <-as.data.frame(datamin.T)
-DatasetTest_max_min<-merge(datamin.T,datamax.T,all=TRUE)
-data_tra[1:3]<-NULL
-nms  <- names(data_tra)
-DatasetTest_max_min<-setNames(DatasetTest_max_min,  nms)
-write.csv(DatasetTest_max_min,file="MinMaxValuesBueno.csv")
+#data_tra=read.csv("DatasetTrain.csv")
+#DataTest <- data_tra[-c(2501:22500), ]
+#DataTest[1:3]<-NULL
+#datamax<-as.data.frame(colmax(DataTest))
+#datamax.T <- t(datamax[,1:ncol(datamax)]) # Transpose dataset
+#datamax.T <-as.data.frame(datamax.T)
+#datamin<-as.data.frame(colmin(DataTest))
+#datamin.T <- t(datamin[,1:ncol(datamin)]) # Transpose dataset
+#datamin.T <-as.data.frame(datamin.T)
+#DatasetTest_max_min<-merge(datamin.T,datamax.T,all=TRUE)
+#nms  <- names(DataTest[1:13])
+#DatasetTest_max_min<-setNames(DatasetTest_max_min,  nms)
+#write.csv(DatasetTest_max_min,file="DatasetTestMaxMin.csv")
 
-
-
+#Guardar dataset de test sin normalizar
+#setwd("C:\\Users\\LAPTOP\\Desktop\\I.A.A\\PROYECTO")
+#data_tra=read.csv("DatasetTrain.csv")
+#DataTest <- images[-c(2501:22500), ]
+#DataTest[1:2]<-NULL
+#write.csv(DataTest,file="DatasetTestSinNormalizar.csv")
 
 
 ############### NORMALIZACION DE ATRIBUTOS ############
