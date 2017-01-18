@@ -1,0 +1,3 @@
+"","feature_mean_color","feature_mean_red","feature_mean_green","feature_mean_blue","feature_mean_gradient","feature_mean_gradient_channel1","feature_mean_gradient_channel2","feature_mean_gradient_channel3","feature_numberOfLittleObjects","feature_numberOfMediumObjects","feature_detectedStrongEdges","feature_detectedWeakEdges","feature_numberOfStringPixelsForEdges"
+"1",0.104247276688453,0.0755139215686274,0.0910263180827887,0.0253096078431373,0.00183828796434364,0.00173880773750399,0.00195590219053338,0.00181999090265727,167,356,0,0,6
+"2",0.965668191721133,0.998214411764706,0.956521350762527,0.999997156862745,0.0702008391289929,0.072645430192461,0.0713722262265548,0.0704752461131392,2071,5610,18963,7485,1255

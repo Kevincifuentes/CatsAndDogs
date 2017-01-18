@@ -1,14 +1,15 @@
 library(shiny)
 
 server <- shinyServer(function(input, output, session) {
+  
+  #colMax <- function(data) sapply(data, max, na.rm = TRUE)
+  #colMin <- function(data) sapply(data, min, na.rm = TRUE)
+  
   #Preparar red neuronal
   setwd(dirname(rstudioapi::getActiveDocumentContext()$path)) 
   setwd("..")
-  datos_train=read.csv("DatasetTrain.csv")
-  datos_train[1]<-NULL
-  datos_test=read.csv("DatasetTest.csv")
-  datos_test[1:2]<-NULL
-  datos_test$animaltype=0
+  datos_minmax=read.csv("MinMaxValuesBueno.csv")
+  datos_minmax[1] <- NULL 
   
   library(neuralnet)
   
@@ -72,7 +73,7 @@ server <- shinyServer(function(input, output, session) {
     #Convertir a CSV la imagen
     print(input$files$datapath)
     datagram <- NULL
-    datagram <- crearCSVImagen(input$files)
+    datagram <- crearCSVImagen(input$files, datos_minmax)
     print(datagram)
     file.remove("actual .csv")
     write.csv(datagram,file=paste("actual", ".csv"))
@@ -83,7 +84,7 @@ server <- shinyServer(function(input, output, session) {
   observeEvent(input$predecir, {
     #Aquí habría que poner la prediccion con la red neuronal
     datos_test <- read.csv(paste("actual", ".csv"))
-    datos_test[1:2]<-NULL
+    datos_test[1]<-NULL
     datos_test$animaltype=0
     #print(datos_test)
     prediccion  <- compute(modelo, within(datos_test,rm(animaltype)))

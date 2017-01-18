@@ -1,4 +1,4 @@
-crearCSVImagen = function(files){
+crearCSVImagen = function(files, datos_minmax){
   library(imager)
   library(stringr)
   library(fixedpoints)
@@ -16,7 +16,7 @@ crearCSVImagen = function(files){
   images<-as.data.frame(1)
   
   #new columns
-  images$animaltype<- NA 
+  images$animaltype<- 0 
   images$feature_mean_color<-NA
   images$feature_mean_red<- NA
   images$feature_mean_green<- NA
@@ -242,18 +242,18 @@ crearCSVImagen = function(files){
   #cutoff = round(0.8*nrow(images))
   #images_train<-images[1:cutoff,]
   #images_test<-images[-(1:cutoff),]
-  
-  
+  images[1]<-NULL
+  print(images)
+  imageToApply <- merge(datos_minmax, images, all=TRUE)
+  print(imageToApply)
   
   ############### NORMALIZACION DE ATRIBUTOS ############
   # -----------------------------------------------------
-  #doit <- function(x) {(x - min(x, na.rm=TRUE))/(max(x,na.rm=TRUE) - min(x, na.rm=TRUE))*1}
-  #images2 <- as.data.frame(lapply(images[3:15], doit))
-  #images[3:15]<-NULL
-  #DatasetTest <- cbind(images2)
+  doit <- function(x) {(x - min(x, na.rm=TRUE))/(max(x,na.rm=TRUE) - min(x, na.rm=TRUE))*1}
+  images <- as.data.frame(lapply(imageToApply, doit))
   ############### Guardamos el dataset ##################
   # -----------------------------------------------------
-  return(images)
+  return(images[2,])
   
 }
 
